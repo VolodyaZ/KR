@@ -1,0 +1,5 @@
+a, login, a@mail, pswrd, admin
+a b a@mail 111 admin
+a c a@mail a12 user
+a d a@mail d user
+a, dog, a@mail ,d, USER
