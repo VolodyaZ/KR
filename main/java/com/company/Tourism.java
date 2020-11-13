@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Tourism {
     private int id;
@@ -13,21 +14,32 @@ public class Tourism {
     private int price;
     private double rating;
 
-    public int getId() {
-        return id;
+    public Tourism() {
+        this(0, "", 0, "", new Date(), new Date(), "", 0, 0.);
     }
 
-    @Override
-    public String toString() {
-        return id + ", " +
-                name + ", " +
-                tourId + ", " +
-                tourName + ", " +
-                tourStartingDate + ", " +
-                tourEndingDate + ", " +
-                category + ", " +
-                price + ", " +
-                rating;
+    public Tourism(int id,
+                   String name,
+                   int tourId,
+                   String tourName,
+                   Date tourStartingDate,
+                   Date tourEndingDate,
+                   String category,
+                   int price,
+                   double rating) {
+        this.id = id;
+        this.name = name;
+        this.tourId = tourId;
+        this.tourName = tourName;
+        this.tourStartingDate = tourStartingDate;
+        this.tourEndingDate = tourEndingDate;
+        this.category = category;
+        this.price = price;
+        this.rating = rating;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {
@@ -98,27 +110,37 @@ public class Tourism {
         this.rating = rating;
     }
 
-    public Tourism() {
-
+    @Override
+    public String toString() {
+        return id + ", " +
+                name + ", " +
+                tourId + ", " +
+                tourName + ", " +
+                tourStartingDate + ", " +
+                tourEndingDate + ", " +
+                category + ", " +
+                price + ", " +
+                rating;
     }
 
-    public Tourism(int id,
-                   String name,
-                   int tourId,
-                   String tourName,
-                   Date tourStartingDate,
-                   Date tourEndingDate,
-                   String category,
-                   int price,
-                   double rating) {
-        this.id = id;
-        this.name = name;
-        this.tourId = tourId;
-        this.tourName = tourName;
-        this.tourStartingDate = tourStartingDate;
-        this.tourEndingDate = tourEndingDate;
-        this.category = category;
-        this.price = price;
-        this.rating = rating;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tourism tourism = (Tourism) o;
+        return id == tourism.id &&
+                tourId == tourism.tourId &&
+                price == tourism.price &&
+                Double.compare(tourism.rating, rating) == 0 &&
+                Objects.equals(name, tourism.name) &&
+                Objects.equals(tourName, tourism.tourName) &&
+                Objects.equals(tourStartingDate, tourism.tourStartingDate) &&
+                Objects.equals(tourEndingDate, tourism.tourEndingDate) &&
+                Objects.equals(category, tourism.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, tourId, tourName, tourStartingDate, tourEndingDate, category, price, rating);
     }
 }

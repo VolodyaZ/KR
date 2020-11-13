@@ -21,11 +21,9 @@ public class Main {
                                 "exit - 6");
             int i;
             String token;
-//            while (!sc.hasNextInt()) { {
-//                System.out.println("wrong query");
-//                sc.next();
-//            }
-            while (!(token = sc.next()).equals("6")) {
+            boolean finish = false;
+            while (!finish) {
+                token = sc.next();
                 try {
                     i = Integer.parseInt(token);
                     switch (i) {
@@ -36,22 +34,23 @@ public class Main {
                             tmp.setLogin(sc.next());
                             tmp.setEmail(sc.next());
                             tmp.setPassword(sc.next());
-                            switch (sc.next().toUpperCase()) {
-                                case User.RoleKeyWord.ADMIN:
-                                    tmp.setRole(User.Role.ADMIN);
+                            String role = sc.next().toUpperCase();
+                            boolean roleError = true;
+                            for (User.Role val : User.Role.values()) {
+                                if (val.getValue().equals(role)) {
+                                    tmp.setRole(val);
+                                    roleError = false;
                                     break;
-                                case User.RoleKeyWord.USER:
-                                    try {
-                                        tmp.setRole(User.Role.USER);
-                                    } catch (Exception ex) {
-                                        System.out.println("can't register admin");
-                                    }
-                                    break;
-                                default:
-                                    System.out.println("wrong format of field Role");
-                                    continue;
+                                }
                             }
-                            System.out.println(query.register(tmp));
+                            if (roleError) {
+                                System.out.println("wrong format of field Role");
+                            }
+                            try {
+                                System.out.println(query.register(tmp));
+                            } catch (Exception ex) {
+                                System.out.println("can't register a admin");
+                            }
                             break;
                         case 1:
                             System.out.println("enter login, password");
@@ -91,6 +90,9 @@ public class Main {
                             } else {
                                 System.out.println("you are not logged in");
                             }
+                            break;
+                        case 6:
+                            finish = true;
                             break;
                         default:
                             System.out.println("wrong query");

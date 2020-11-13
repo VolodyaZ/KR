@@ -1,13 +1,21 @@
 package com.company;
 
+import java.util.Objects;
+
 public class User {
-    public interface RoleKeyWord {
-        String ADMIN = "ADMIN";
-        String USER = "USER";
-    }
     public enum Role {
-        ADMIN,
-        USER;
+        ADMIN("ADMIN"),
+        USER("USER");
+
+        private final String value;
+
+        Role(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 
     private String name;
@@ -17,15 +25,7 @@ public class User {
     private Role role;
 
     public User() {
-    }
-
-    @Override
-    public String toString() {
-        return name + ", " +
-                login + ", " +
-                email + " ," +
-                password + ", " +
-                role;
+        this("", "", "", "", Role.USER);
     }
 
     public User(String name, String login, String email, String password, Role role) {
@@ -74,5 +74,31 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return name + ", " +
+                login + ", " +
+                email + " ," +
+                password + ", " +
+                role;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(name, user.name) &&
+                Objects.equals(login, user.login) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password) &&
+                role == user.role;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, login, email, password, role);
     }
 }

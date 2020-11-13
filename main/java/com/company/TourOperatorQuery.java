@@ -18,47 +18,50 @@ public class TourOperatorQuery {
         users = new ArrayList<>();
         tourisms = new ArrayList<>();
 
-        Scanner scUser = new Scanner(new File(userFile));
-        Scanner scTour = new Scanner(new File(tourismFile));
-        while (scUser.hasNextLine()) {
-            String[] line = scUser.nextLine().split("[ ,]+");
-            if (line.length != 5) {
-                throw new Exception("wrong format of data");
-            }
-            User tmp = new User();
-            tmp.setName(line[0]);
-            tmp.setLogin(line[1]);
-            tmp.setEmail(line[2]);
-            tmp.setPassword(line[3]);
-            switch (line[4].toUpperCase()) {
-                case User.RoleKeyWord.ADMIN:
-                    tmp.setRole(User.Role.ADMIN);
-                    break;
-                case User.RoleKeyWord.USER:
-                    tmp.setRole(User.Role.USER);
-                    break;
-                default:
+        try (Scanner scUser = new Scanner(new File(userFile));
+            Scanner scTour = new Scanner(new File(tourismFile))) {
+            while (scUser.hasNextLine()) {
+                String[] line = scUser.nextLine().split("[ ,]+");
+                if (line.length != 5) {
+                    throw new Exception("wrong format of data");
+                }
+                User tmp = new User();
+                tmp.setName(line[0]);
+                tmp.setLogin(line[1]);
+                tmp.setEmail(line[2]);
+                tmp.setPassword(line[3]);
+                String role = line[4].toUpperCase();
+                boolean roleError = true;
+                for (User.Role val : User.Role.values()) {
+                    if (val.getValue().equals(role)) {
+                        tmp.setRole(val);
+                        roleError = false;
+                        break;
+                    }
+                }
+                if (roleError) {
                     throw new Exception("wrong format of field Role");
+                }
+                users.add(tmp);
             }
-            users.add(tmp);
-        }
 
-        while (scTour.hasNextLine()) {
-            String[] line = scTour.nextLine().split("[ ,]+");
-            if (line.length != 9) {
-                throw new Exception("wrong format of data");
+            while (scTour.hasNextLine()) {
+                String[] line = scTour.nextLine().split("[ ,]+");
+                if (line.length != 9) {
+                    throw new Exception("wrong format of data");
+                }
+                Tourism tmp = new Tourism();
+                tmp.setId(Integer.parseInt(line[0]));
+                tmp.setName(line[1]);
+                tmp.setTourId(Integer.parseInt(line[2]));
+                tmp.setTourName(line[3]);
+                tmp.setTourStartingDate(new SimpleDateFormat("dd/MM/yyyy").parse(line[4]));
+                tmp.setTourEndingDate(new SimpleDateFormat("dd/MM/yyyy").parse(line[5]));
+                tmp.setCategory(line[6]);
+                tmp.setPrice(Integer.parseInt(line[7]));
+                tmp.setRating(Double.parseDouble(line[8]));
+                tourisms.add(tmp);
             }
-            Tourism tmp = new Tourism();
-            tmp.setId(Integer.parseInt(line[0]));
-            tmp.setName(line[1]);
-            tmp.setTourId(Integer.parseInt(line[2]));
-            tmp.setTourName(line[3]);
-            tmp.setTourStartingDate(new SimpleDateFormat("dd/MM/yyyy").parse(line[4]));
-            tmp.setTourEndingDate(new SimpleDateFormat("dd/MM/yyyy").parse(line[5]));
-            tmp.setCategory(line[6]);
-            tmp.setPrice(Integer.parseInt(line[7]));
-            tmp.setRating(Double.parseDouble(line[8]));
-            tourisms.add(tmp);
         }
     }
 
@@ -130,28 +133,6 @@ public class TourOperatorQuery {
         Object[] sorted =  tourisms.stream().sorted((o1, o2) -> Double.compare(o2.getRating(), o1.getRating())).toArray();
         return Arrays.asList(Arrays.copyOfRange(sorted, 0, n));
     }
-
-    public void averageRating() {
-        // <company, <category, {count, rating}>>
-        HashMap<String, HashMap<String, Double[]>> dict = new HashMap<>();
-        for (Tourism val : tourisms) {
-            if (dict.containsKey(val.getName())) {
-                if (dict.get(val.getName()).containsKey(val.getCategory())) {
-                    double count = dict.get(val.getName()).get(val.getCategory())[0];
-                    double avRating = dict.get(val.getName()).get(val.getCategory())[1];
-                    if (count == 0) {
-                        avRating = val.getRating();
-                    } else {
-                        avRating *= count / (count + 1);
-                    }
-                    ++count;
-                    dict.get(val.getName()).put(val.getCategory(), new Double[]{count, avRating});
-                }
-            }
-        }
-
-    }
-
 
     /**
      * adds user both in users and file
